@@ -18,11 +18,13 @@ class DBI::DBD::SQLite3::Statement < DBI::BaseStatement
     # binding.
     #
     def bind_param(param, value, attribs=nil)
+        @stmt.reset! if @stmt.done?
         raise DBI::InterfaceError, "Bound parameter must be an integer" unless param.kind_of? Fixnum 
         @stmt.bind_param(param, value)
     end
 
     def execute()
+        @stmt.reset! if @stmt.done?
         @result = @stmt.execute
         @rows = DBI::SQL.query?(@sql) ? 0 : @db.changes
     end
@@ -68,6 +70,7 @@ class DBI::DBD::SQLite3::Statement < DBI::BaseStatement
     end
 
     def bind_params(*bindvars)
+        @stmt.reset! if @stmt.done?
         @stmt.bind_params(bindvars)
     end
 
